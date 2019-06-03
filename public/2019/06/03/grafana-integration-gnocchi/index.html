@@ -104,10 +104,18 @@
 <meta property="og:site_name" content="JaiWei Cloud Note">
 <meta property="og:description" content="說明如何使用 Grafana 整合 Gnocchi，以利觀看 OpenStack VM 的監測值">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:updated_time" content="2019-06-03T07:59:18.224Z">
+<meta property="og:image" content="https://jiawei0604.herokuapp.com/2019/06/03/grafana-integration-gnocchi/grafana_dash.jpg">
+<meta property="og:image" content="https://jiawei0604.herokuapp.com/2019/06/03/grafana-integration-gnocchi/grafana_gnocchi.jpg">
+<meta property="og:image" content="https://jiawei0604.herokuapp.com/2019/06/03/grafana-integration-gnocchi/import.jpg">
+<meta property="og:image" content="https://jiawei0604.herokuapp.com/2019/06/03/grafana-integration-gnocchi/dashboard.jpg">
+<meta property="og:image" content="https://jiawei0604.herokuapp.com/2019/06/03/grafana-integration-gnocchi/memory.jpg">
+<meta property="og:image" content="https://jiawei0604.herokuapp.com/2019/06/03/grafana-integration-gnocchi/unit.jpg">
+<meta property="og:image" content="https://jiawei0604.herokuapp.com/2019/06/03/grafana-integration-gnocchi/all.jpg">
+<meta property="og:updated_time" content="2019-06-03T08:28:59.407Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Grafana Integration Gnocchi">
 <meta name="twitter:description" content="說明如何使用 Grafana 整合 Gnocchi，以利觀看 OpenStack VM 的監測值">
+<meta name="twitter:image" content="https://jiawei0604.herokuapp.com/2019/06/03/grafana-integration-gnocchi/grafana_dash.jpg">
 
 
 
@@ -375,7 +383,7 @@
                 
               
 
-              <time title="創建時間：2019-06-03 15:59:18" itemprop="dateCreated datePublished" datetime="2019-06-03T15:59:18+08:00">2019-06-03</time>
+              <time title="創建時間：2019-06-03 16:28:59" itemprop="dateCreated datePublished" datetime="2019-06-03T16:28:59+08:00">2019-06-03</time>
             
 
             
@@ -385,6 +393,19 @@
 
           
             
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">評論數：</span>
+                <a href="/2019/06/03/grafana-integration-gnocchi/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/06/03/grafana-integration-gnocchi/" itemprop="commentCount"></span>
+                </a>
+              </span>
             
           
 
@@ -423,7 +444,7 @@
 
 <p>啟動後可以進入 grafana dashboard，帳號為 admin</p>
 <p> <a href="http://docker_host:3000" target="_blank" rel="noopener">http://docker_host:3000</a></p>
-<img class="public/images/grafana-integration-gnocchi/grafana_dash.jpg">
+<img src="/2019/06/03/grafana-integration-gnocchi/grafana_dash.jpg" title="[grafana]">
 
 
 <h2 id="新增-Datasource"><a href="#新增-Datasource" class="headerlink" title="新增 Datasource"></a>新增 Datasource</h2><p>新增 gnocchi datasource 之前，請先修改 /etc/keystone/keystone.conf 以及 /etc/gnocchi/gnocchi.conf，加入以下內容，IP 為 grafana dashboard</p>
@@ -434,18 +455,30 @@
 
 <p>登入後點選 create data source ，Type 選擇 gnocchi，之後設定依照下圖，填寫完成後，可以按下 Test 測試是否連結成功。</p>
 <p>URL 的 IP 為 Controller IP，Keystone 參數請依照環境填寫</p>
+<img src="/2019/06/03/grafana-integration-gnocchi/grafana_gnocchi.jpg" title="[Gnocchi Datasource]">
+
 <h2 id="匯入-dashboard"><a href="#匯入-dashboard" class="headerlink" title="匯入 dashboard"></a>匯入 dashboard</h2><p>Grafana 的官網有提供其他作者上傳的 dashboard，可以根據各種類型搜尋 <a href="https://grafana.com/dashboards" target="_blank" rel="noopener">https://grafana.com/dashboards</a></p>
 <p>這裡匯入編號 4569 的 dashboard， <a href="https://grafana.com/dashboards/4569" target="_blank" rel="noopener">https://grafana.com/dashboards/4569</a></p>
 <p>並選擇剛剛新增的 gnocchi datasource</p>
+<img src="/2019/06/03/grafana-integration-gnocchi/import.jpg" title="[Import dashboard]">
+
 <h2 id="修改-Dashboard"><a href="#修改-Dashboard" class="headerlink" title="修改 Dashboard"></a>修改 Dashboard</h2><p>匯入後會看到已存在 VM 的監測值，在 Memory 那欄會出現驚嘆號，這是因為原作者要顯示 Memory 使用率，但是 Memory 的 query 有誤，所以需要修改。</p>
+<img src="/2019/06/03/grafana-integration-gnocchi/dashboard.jpg" title="[Import dashboard]">
+
 <p>點選 Memory usage 旁的箭頭，選 edit，並依照下圖修改</p>
+<img src="/2019/06/03/grafana-integration-gnocchi/memory.jpg" title="[Import dashboard]">
+
 <p>這裡 Memory 的單位是錯誤的，所以也要修改，改為 MegaByte</p>
+<img src="/2019/06/03/grafana-integration-gnocchi/unit.jpg" title="[Import dashboard]">
+
 <h2 id="修改-Variables"><a href="#修改-Variables" class="headerlink" title="修改 Variables"></a>修改 Variables</h2><p>Grafana 有提供 Variables 的功能，可以依據客製的 Variables 來顯示 dashboard 的直，此範例預設為顯示所有 VM 的監測值，點擊左上角的 Instance，會發現有錯誤，無法列出所有 VM ，因此需要修改 Variables 。</p>
 <p>點選上方 設定 -&gt; Variables -&gt; 選擇變數($INSTANCES)</p>
 <p>修改 Query，改為以下</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">resources(instance, $&#123;display_name&#125;[$&#123;id&#125;], id, ended_at=null)</span><br></pre></td></tr></table></figure>
 
 <p>成功的話可以看到下面會列出所有 VM</p>
+<img src="/2019/06/03/grafana-integration-gnocchi/all.jpg" title="[all]">
+
 <p>這樣就可以點選左上角的 INSTANCE 來選擇要顯示的 VM監控值了，記得要存檔喔</p>
 
       
@@ -512,6 +545,13 @@
 
           </div>
           
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+      </div>
+    </div>
 
   
 
@@ -800,6 +840,47 @@
   
 
   
+  
+  <script id="dsq-count-scr" src="https://dommgifer.disqus.com/count.js" async></script>
+
+
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://jiawei0604.herokuapp.com/2019/06/03/grafana-integration-gnocchi/";
+    this.page.identifier = "2019/06/03/grafana-integration-gnocchi/";
+    this.page.title = 'Grafana Integration Gnocchi';
+    };
+  function loadComments() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://dommgifer.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', '' + +new Date());
+    (d.head || d.body).appendChild(s);
+  }
+  
+    $(function() {
+      var offsetTop = $('#comments').offset().top - $(window).height();
+      if (offsetTop <= 0) {
+        // load directly when there's no a scrollbar
+        loadComments();
+      } else {
+        $(window).on('scroll.disqus_scroll', function() {
+          // offsetTop may changes because of manually resizing browser window or lazy loading images.
+          var offsetTop = $('#comments').offset().top - $(window).height();
+          var scrollTop = $(window).scrollTop();
+
+          // pre-load comments a bit? (margin or anything else)
+          if (offsetTop - scrollTop < 60) {
+            $(window).off('.disqus_scroll');
+            loadComments();
+          }
+        });
+      }
+    });
+  
+</script>
+
+
+
 
 
   
