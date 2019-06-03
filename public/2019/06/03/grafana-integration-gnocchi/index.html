@@ -104,7 +104,7 @@
 <meta property="og:site_name" content="JaiWei Cloud Note">
 <meta property="og:description" content="說明如何使用 Grafana 整合 Gnocchi，以利觀看 OpenStack VM 的監測值">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:updated_time" content="2019-06-03T07:32:47.383Z">
+<meta property="og:updated_time" content="2019-06-03T07:59:18.224Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Grafana Integration Gnocchi">
 <meta name="twitter:description" content="說明如何使用 Grafana 整合 Gnocchi，以利觀看 OpenStack VM 的監測值">
@@ -375,7 +375,7 @@
                 
               
 
-              <time title="創建時間：2019-06-03 15:32:47" itemprop="dateCreated datePublished" datetime="2019-06-03T15:32:47+08:00">2019-06-03</time>
+              <time title="創建時間：2019-06-03 15:59:18" itemprop="dateCreated datePublished" datetime="2019-06-03T15:59:18+08:00">2019-06-03</time>
             
 
             
@@ -422,7 +422,10 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker run \</span><br><span class="line">  -d \</span><br><span class="line">  -p 3000:3000 \</span><br><span class="line">  --name=grafana \</span><br><span class="line">  -e &quot;GF_SECURITY_ADMIN_PASSWORD=admin&quot; \</span><br><span class="line">  -e &quot;GF_INSTALL_PLUGINS=gnocchixyz-gnocchi-datasource&quot; \</span><br><span class="line">  -v grafana-storage:/var/lib/grafana \</span><br><span class="line">  grafana/grafana</span><br></pre></td></tr></table></figure>
 
 <p>啟動後可以進入 grafana dashboard，帳號為 admin</p>
-<p> <a href="http://docker\_host:3000" target="_blank" rel="noopener">http://docker\_host:3000</a></p>
+<p> <a href="http://docker_host:3000" target="_blank" rel="noopener">http://docker_host:3000</a></p>
+<img class="public/images/grafana-integration-gnocchi/grafana_dash.jpg">
+
+
 <h2 id="新增-Datasource"><a href="#新增-Datasource" class="headerlink" title="新增 Datasource"></a>新增 Datasource</h2><p>新增 gnocchi datasource 之前，請先修改 /etc/keystone/keystone.conf 以及 /etc/gnocchi/gnocchi.conf，加入以下內容，IP 為 grafana dashboard</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[cors]</span><br><span class="line">allowed_origin = http://10.50.2.10:3000</span><br></pre></td></tr></table></figure>
 
@@ -571,12 +574,16 @@
                 <div class="site-state-item site-state-tags">
                   
                     
+                      <a href="/tags/">
+                    
+                  
+                    
                     
                       
                     
                     <span class="site-state-item-count">1</span>
                     <span class="site-state-item-name">標籤</span>
-                  
+                  </a>
                 </div>
               
             </nav>
