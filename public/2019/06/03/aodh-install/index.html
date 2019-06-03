@@ -5,19 +5,20 @@
   
 
   
-  <title>Hexo</title>
+  <title>Aodh Install | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="此篇說明如何安裝 aodh 服務">
+  <meta name="description" content="此篇說明如何安裝 aodh 服務以下範例為 ubuntu queens 版本 建立資料庫進入資料庫後，建立資料庫和使用者  12345678# mysql -u root -pMariaDB [(none)]&amp;gt; CREATE DATABASE aodh;MariaDB [(none)]&amp;gt; GRANT ALL PRIVILEGES ON aodh.* TO &amp;apos;aodh&amp;apos">
+<meta name="keywords" content="OpenStack">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hexo">
+<meta property="og:title" content="Aodh Install">
 <meta property="og:url" content="http://yoursite.com/2019/06/03/aodh-install/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="此篇說明如何安裝 aodh 服務">
+<meta property="og:description" content="此篇說明如何安裝 aodh 服務以下範例為 ubuntu queens 版本 建立資料庫進入資料庫後，建立資料庫和使用者  12345678# mysql -u root -pMariaDB [(none)]&amp;gt; CREATE DATABASE aodh;MariaDB [(none)]&amp;gt; GRANT ALL PRIVILEGES ON aodh.* TO &amp;apos;aodh&amp;apos">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-06-03T03:03:17.321Z">
+<meta property="og:updated_time" content="2019-06-03T03:39:04.431Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
-<meta name="twitter:description" content="此篇說明如何安裝 aodh 服務">
+<meta name="twitter:title" content="Aodh Install">
+<meta name="twitter:description" content="此篇說明如何安裝 aodh 服務以下範例為 ubuntu queens 版本 建立資料庫進入資料庫後，建立資料庫和使用者  12345678# mysql -u root -pMariaDB [(none)]&amp;gt; CREATE DATABASE aodh;MariaDB [(none)]&amp;gt; GRANT ALL PRIVILEGES ON aodh.* TO &amp;apos;aodh&amp;apos">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -67,16 +68,26 @@
         <section id="main"><article id="post-aodh-install" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/06/03/aodh-install/" class="article-date">
-  <time datetime="2019-06-03T03:03:17.325Z" itemprop="datePublished">2019-06-03</time>
+  <time datetime="2019-06-03T03:39:04.435Z" itemprop="datePublished">2019-06-03</time>
 </a>
     
   </div>
   <div class="article-inner">
     
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Aodh Install
+    </h1>
+  
+
+      </header>
+    
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="Aodh-Install"><a href="#Aodh-Install" class="headerlink" title="Aodh Install"></a>Aodh Install</h1><p>以下範例為 ubuntu queens 版本</p>
+        <p>此篇說明如何安裝 aodh 服務<br>以下範例為 ubuntu queens 版本</p>
 <h2 id="建立資料庫"><a href="#建立資料庫" class="headerlink" title="建立資料庫"></a>建立資料庫</h2><p>進入資料庫後，建立資料庫和使用者 </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># mysql -u root -p</span><br><span class="line">MariaDB [(none)]&gt; CREATE DATABASE aodh;</span><br><span class="line"></span><br><span class="line">MariaDB [(none)]&gt; GRANT ALL PRIVILEGES ON aodh.* TO &apos;aodh&apos;@&apos;localhost&apos; \ </span><br><span class="line">IDENTIFIED BY &apos;openstack&apos;;</span><br><span class="line"></span><br><span class="line">MariaDB [(none)]&gt; GRANT ALL PRIVILEGES ON aodh.* TO &apos;aodh&apos;@&apos;%&apos; \</span><br><span class="line"> IDENTIFIED BY &apos;openstack&apos;;</span><br></pre></td></tr></table></figure>
 
@@ -101,13 +112,25 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/03/aodh-install/" data-id="cjwfsfhgu00009sjxrpuo3svi" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/03/aodh-install/" data-id="cjwft7dik0000gejxpttxrfvr" class="article-share-link">Share</a>
       
       
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenStack/">OpenStack</a></li></ul>
+
     </footer>
   </div>
   
     
+<nav id="article-nav">
+  
+  
+    <a href="/2019/06/03/ceilometer-and-gnocchi/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Ceilometer and Gnocchi Install</div>
+    </a>
+  
+</nav>
+
   
 </article>
 
@@ -119,9 +142,23 @@
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenStack/">OpenStack</a></li></ul>
+    </div>
+  </div>
+
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/OpenStack/" style="font-size: 10px;">OpenStack</a>
+    </div>
+  </div>
+
   
     
   <div class="widget-wrap">
@@ -140,7 +177,11 @@
       <ul>
         
           <li>
-            <a href="/2019/06/03/aodh-install/">(no title)</a>
+            <a href="/2019/06/03/aodh-install/">Aodh Install</a>
+          </li>
+        
+          <li>
+            <a href="/2019/06/03/ceilometer-and-gnocchi/">Ceilometer and Gnocchi Install</a>
           </li>
         
       </ul>
