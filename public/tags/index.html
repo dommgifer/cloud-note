@@ -2,14 +2,15 @@
 <html lang="zh">
 <head><meta name="generator" content="Hexo 3.8.0">
     <meta charset="utf-8">
-<title>Etiqueta: OpenStack - JaiWei Cloud Note</title>
+<title>Etiquetas - JaiWei Cloud Note</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
 
-    <meta property="og:type" content="website">
+    <meta name="keywords" content="OpenStack">
+<meta property="og:type" content="website">
 <meta property="og:title" content="JaiWei Cloud Note">
-<meta property="og:url" content="https://jiawei0604.herokuapp.com/tags/OpenStack/index.html">
+<meta property="og:url" content="https://jiawei0604.herokuapp.com/tags/index.html">
 <meta property="og:site_name" content="JaiWei Cloud Note">
 <meta property="og:locale" content="zh">
 <meta property="og:image" content="https://jiawei0604.herokuapp.com/images/og_image.png">
@@ -103,7 +104,7 @@
                 
                 <a class="navbar-item" href="/categories">Categories</a>
                 
-                <a class="navbar-item" href="/tags">Tags</a>
+                <a class="navbar-item is-active" href="/tags">Tags</a>
                 
                 <a class="navbar-item" href="/about">About</a>
                 
@@ -134,117 +135,25 @@
     <section class="section">
         <div class="container">
             <div class="columns">
-                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card widget">
     <div class="card-content">
-        <nav class="breadcrumb" aria-label="breadcrumbs">
-        <ul>
-            <li><a href="/tags">Etiquetas</a></li>
-            <li class="is-active"><a href="#" aria-current="page">OpenStack</a></li>
-        </ul>
-        </nav>
-    </div>
-</div>
-
-    <div class="card">
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-06-03T04:23:03.178Z">2019-06-03</time>
+        <div class="menu">
+            <h3 class="menu-label">
+                Etiquetas
+            </h3>
+            <div class="field is-grouped is-grouped-multiline">
                 
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    2 minutes read (About 358 words)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2019/06/03/aodh-install/">Aodh Install</a>
-            
-        </h1>
-        <div class="content">
-            <p>此篇說明如何安裝 aodh 服務<br>以下範例為 ubuntu queens 版本</p>
-<h2 id="建立資料庫"><a href="#建立資料庫" class="headerlink" title="建立資料庫"></a>建立資料庫</h2><p>進入資料庫後，建立資料庫和使用者 </p>
-<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># mysql -u root -p</span><br><span class="line">MariaDB [(none)]&gt; CREATE DATABASE aodh;</span><br><span class="line"></span><br><span class="line">MariaDB [(none)]&gt; GRANT ALL PRIVILEGES ON aodh.* TO &apos;aodh&apos;@&apos;localhost&apos; \ </span><br><span class="line">IDENTIFIED BY &apos;openstack&apos;;</span><br><span class="line"></span><br><span class="line">MariaDB [(none)]&gt; GRANT ALL PRIVILEGES ON aodh.* TO &apos;aodh&apos;@&apos;%&apos; \</span><br><span class="line"> IDENTIFIED BY &apos;openstack&apos;;</span><br></pre></td></tr></table></figure>
-        </div>
-        
-        
-        <div class="level is-mobile">
-            <div class="level-start">
-                <div class="level-item">
-                <a class="button is-size-7 is-light" href="/2019/06/03/aodh-install/#more">Read More</a>
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/OpenStack/">
+                        <span class="tag">OpenStack</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
                 </div>
+                
             </div>
         </div>
-        
-        
     </div>
-</div>
-
-
-
-
-
-
-
-
-    <div class="card">
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-06-03T03:45:02.743Z">2019-06-03</time>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    15 minutes read (About 2289 words)
-                </span>
-                
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                <a class="has-link-black-ter" href="/2019/06/03/ceilometer-and-gnocchi/">Ceilometer and Gnocchi Install</a>
-            
-        </h1>
-        <div class="content">
-            <p>此篇說明如何安裝 ceilometer  和 gnocchi</p>
-<h2 id="注意事項"><a href="#注意事項" class="headerlink" title="注意事項"></a>注意事項</h2><p>在安裝過程發現 Queens 版官方的套件有問題，導致在安裝 gnocchi-api 時會有python2 和 python3 套件衝突，導致刪除 cinder-api、 keystone、libapache2-mod-wsgi、 nova-placement-api、 openstack-dashboard，因此需要加入新的 repository</p>
-        </div>
-        
-        
-        <div class="level is-mobile">
-            <div class="level-start">
-                <div class="level-item">
-                <a class="button is-size-7 is-light" href="/2019/06/03/ceilometer-and-gnocchi/#more">Read More</a>
-                </div>
-            </div>
-        </div>
-        
-        
-    </div>
-</div>
-
-
-
-
-
-
-
-
-</div>
+</div></div>
                 
 
 
