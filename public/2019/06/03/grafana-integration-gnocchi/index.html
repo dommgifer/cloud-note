@@ -111,7 +111,7 @@
 <meta property="og:image" content="https://jiawei0604.herokuapp.com/2019/06/03/grafana-integration-gnocchi/memory.jpg">
 <meta property="og:image" content="https://jiawei0604.herokuapp.com/2019/06/03/grafana-integration-gnocchi/unit.jpg">
 <meta property="og:image" content="https://jiawei0604.herokuapp.com/2019/06/03/grafana-integration-gnocchi/all.jpg">
-<meta property="og:updated_time" content="2019-06-03T08:28:59.407Z">
+<meta property="og:updated_time" content="2019-06-03T09:05:04.545Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Grafana Integration Gnocchi">
 <meta name="twitter:description" content="說明如何使用 Grafana 整合 Gnocchi，以利觀看 OpenStack VM 的監測值">
@@ -383,7 +383,7 @@
                 
               
 
-              <time title="創建時間：2019-06-03 16:28:59" itemprop="dateCreated datePublished" datetime="2019-06-03T16:28:59+08:00">2019-06-03</time>
+              <time title="創建時間：2019-06-03 17:05:04" itemprop="dateCreated datePublished" datetime="2019-06-03T17:05:04+08:00">2019-06-03</time>
             
 
             
@@ -435,7 +435,8 @@
       
         <p>Grafana 的安裝可以使用套件的方式，或是使用 docker 來啟動，使用 docker 啟動方便又快速，所以以下教學使用 docker 啟動</p>
 <p>請先安裝 docker，如果還沒安裝，可以使用此指令安裝 </p>
-<p> curl -sSL <a href="https://get.docker.com/" target="_blank" rel="noopener">https://get.docker.com/</a> | sh</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># curl -sSL [https://get.docker.com/](https://get.docker.com/) \| sh</span><br></pre></td></tr></table></figure>
+
 <h2 id="建立-docker-volume"><a href="#建立-docker-volume" class="headerlink" title="建立 docker volume"></a>建立 docker volume</h2><p>建立 docker volume 以便儲存 grafana 的資料 </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># docker volume create grafana-storage</span><br></pre></td></tr></table></figure>
 
