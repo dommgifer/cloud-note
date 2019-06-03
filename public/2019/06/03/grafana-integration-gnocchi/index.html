@@ -96,13 +96,18 @@
 
 
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="JaiWei Cloud Note">
-<meta property="og:url" content="https://jiawei0604.herokuapp.com/index.html">
+  <meta name="description" content="說明如何使用 Grafana 整合 Gnocchi，以利觀看 OpenStack VM 的監測值">
+<meta name="keywords" content="OpenStack">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Grafana Integration Gnocchi">
+<meta property="og:url" content="https://jiawei0604.herokuapp.com/2019/06/03/grafana-integration-gnocchi/index.html">
 <meta property="og:site_name" content="JaiWei Cloud Note">
+<meta property="og:description" content="說明如何使用 Grafana 整合 Gnocchi，以利觀看 OpenStack VM 的監測值">
 <meta property="og:locale" content="zh-TW">
+<meta property="og:updated_time" content="2019-06-03T07:32:47.383Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JaiWei Cloud Note">
+<meta name="twitter:title" content="Grafana Integration Gnocchi">
+<meta name="twitter:description" content="說明如何使用 Grafana 整合 Gnocchi，以利觀看 OpenStack VM 的監測值">
 
 
 
@@ -110,7 +115,7 @@
 
   
   
-  <link rel="canonical" href="https://jiawei0604.herokuapp.com/">
+  <link rel="canonical" href="https://jiawei0604.herokuapp.com/2019/06/03/grafana-integration-gnocchi/">
 
 
 
@@ -120,7 +125,7 @@
   };
 </script>
 
-  <title>JaiWei Cloud Note</title>
+  <title>Grafana Integration Gnocchi | JaiWei Cloud Note</title>
   
 
 
@@ -168,8 +173,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -207,7 +211,7 @@
         
         
           
-          <li class="menu-item menu-item-home menu-item-active">
+          <li class="menu-item menu-item-home">
 
     
     
@@ -311,9 +315,9 @@
           
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -345,10 +349,8 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/06/03/grafana-integration-gnocchi/" class="post-title-link" itemprop="url">Grafana Integration Gnocchi</a>
+          <h1 class="post-title" itemprop="name headline">Grafana Integration Gnocchi
+
               
             
           </h1>
@@ -394,6 +396,8 @@
           
 
           
+            <div class="post-description">說明如何使用 Grafana 整合 Gnocchi，以利觀看 OpenStack VM 的監測值</div>
+          
 
         </div>
       </header>
@@ -408,18 +412,39 @@
       
 
       
-        
-          說明如何使用 Grafana 整合 Gnocchi，以利觀看 OpenStack VM 的監測值
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/06/03/grafana-integration-gnocchi/">
-                閱讀全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
+        <p>Grafana 的安裝可以使用套件的方式，或是使用 docker 來啟動，使用 docker 啟動方便又快速，所以以下教學使用 docker 啟動</p>
+<p>請先安裝 docker，如果還沒安裝，可以使用此指令安裝 </p>
+<p> curl -sSL <a href="https://get.docker.com/" target="_blank" rel="noopener">https://get.docker.com/</a> | sh</p>
+<h2 id="建立-docker-volume"><a href="#建立-docker-volume" class="headerlink" title="建立 docker volume"></a>建立 docker volume</h2><p>建立 docker volume 以便儲存 grafana 的資料 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># docker volume create grafana-storage</span><br></pre></td></tr></table></figure>
+
+<h2 id="啟動-grafana"><a href="#啟動-grafana" class="headerlink" title="啟動 grafana"></a>啟動 grafana</h2><p>啟動時可以帶入要安裝的 plugin 參數，這裡帶入 gnocchi 的 plugin，還有密碼的參數</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker run \</span><br><span class="line">  -d \</span><br><span class="line">  -p 3000:3000 \</span><br><span class="line">  --name=grafana \</span><br><span class="line">  -e &quot;GF_SECURITY_ADMIN_PASSWORD=admin&quot; \</span><br><span class="line">  -e &quot;GF_INSTALL_PLUGINS=gnocchixyz-gnocchi-datasource&quot; \</span><br><span class="line">  -v grafana-storage:/var/lib/grafana \</span><br><span class="line">  grafana/grafana</span><br></pre></td></tr></table></figure>
+
+<p>啟動後可以進入 grafana dashboard，帳號為 admin</p>
+<p> <a href="http://docker\_host:3000" target="_blank" rel="noopener">http://docker\_host:3000</a></p>
+<h2 id="新增-Datasource"><a href="#新增-Datasource" class="headerlink" title="新增 Datasource"></a>新增 Datasource</h2><p>新增 gnocchi datasource 之前，請先修改 /etc/keystone/keystone.conf 以及 /etc/gnocchi/gnocchi.conf，加入以下內容，IP 為 grafana dashboard</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[cors]</span><br><span class="line">allowed_origin = http://10.50.2.10:3000</span><br></pre></td></tr></table></figure>
+
+<p>重啟服務</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># service apache2 restart</span><br><span class="line"># service gnocchi-metricd restart</span><br></pre></td></tr></table></figure>
+
+<p>登入後點選 create data source ，Type 選擇 gnocchi，之後設定依照下圖，填寫完成後，可以按下 Test 測試是否連結成功。</p>
+<p>URL 的 IP 為 Controller IP，Keystone 參數請依照環境填寫</p>
+<h2 id="匯入-dashboard"><a href="#匯入-dashboard" class="headerlink" title="匯入 dashboard"></a>匯入 dashboard</h2><p>Grafana 的官網有提供其他作者上傳的 dashboard，可以根據各種類型搜尋 <a href="https://grafana.com/dashboards" target="_blank" rel="noopener">https://grafana.com/dashboards</a></p>
+<p>這裡匯入編號 4569 的 dashboard， <a href="https://grafana.com/dashboards/4569" target="_blank" rel="noopener">https://grafana.com/dashboards/4569</a></p>
+<p>並選擇剛剛新增的 gnocchi datasource</p>
+<h2 id="修改-Dashboard"><a href="#修改-Dashboard" class="headerlink" title="修改 Dashboard"></a>修改 Dashboard</h2><p>匯入後會看到已存在 VM 的監測值，在 Memory 那欄會出現驚嘆號，這是因為原作者要顯示 Memory 使用率，但是 Memory 的 query 有誤，所以需要修改。</p>
+<p>點選 Memory usage 旁的箭頭，選 edit，並依照下圖修改</p>
+<p>這裡 Memory 的單位是錯誤的，所以也要修改，改為 MegaByte</p>
+<h2 id="修改-Variables"><a href="#修改-Variables" class="headerlink" title="修改 Variables"></a>修改 Variables</h2><p>Grafana 有提供 Variables 的功能，可以依據客製的 Variables 來顯示 dashboard 的直，此範例預設為顯示所有 VM 的監測值，點擊左上角的 Instance，會發現有錯誤，無法列出所有 VM ，因此需要修改 Variables 。</p>
+<p>點選上方 設定 -&gt; Variables -&gt; 選擇變數($INSTANCES)</p>
+<p>修改 Query，改為以下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">resources(instance, $&#123;display_name&#125;[$&#123;id&#125;], id, ended_at=null)</span><br></pre></td></tr></table></figure>
+
+<p>成功的話可以看到下面會列出所有 VM</p>
+<p>這樣就可以點選左上角的 INSTANCE 來選擇要顯示的 VM監控值了，記得要存檔喔</p>
+
       
     </div>
 
@@ -440,304 +465,36 @@
 
     <footer class="post-footer">
       
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://jiawei0604.herokuapp.com/2019/06/03/aodh-install/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="JiaWei Xie">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JaiWei Cloud Note">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/06/03/aodh-install/" class="post-title-link" itemprop="url">Aodh Install</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">發表於</span>
-              
-
-              
-                
-              
-
-              <time title="創建時間：2019-06-03 15:32:42" itemprop="dateCreated datePublished" datetime="2019-06-03T15:32:42+08:00">2019-06-03</time>
-            
-
-            
-          </span>
-
+        <div class="post-tags">
           
-
+            <a href="/tags/OpenStack/" rel="tag"># OpenStack</a>
           
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
+      
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
+      
       
       
 
       
-        
-          此篇說明如何安裝 aodh 服務，以下範例為 ubuntu queens 版本
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/06/03/aodh-install/">
-                閱讀全文 &raquo;
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/03/aodh-install/" rel="next" title="Aodh Install">
+                <i class="fa fa-chevron-left"></i> Aodh Install
               </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://jiawei0604.herokuapp.com/2019/06/03/ceilometer-and-gnocchi/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="JiaWei Xie">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="JaiWei Cloud Note">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/06/03/ceilometer-and-gnocchi/" class="post-title-link" itemprop="url">Ceilometer and Gnocchi Install</a>
-              
             
-          </h1>
-        
+          </div>
 
-        <div class="post-meta">
-          <span class="post-time">
+          <span class="post-nav-divider"></span>
 
+          <div class="post-nav-prev post-nav-item">
             
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">發表於</span>
-              
-
-              
-                
-              
-
-              <time title="創建時間：2019-06-03 15:32:18" itemprop="dateCreated datePublished" datetime="2019-06-03T15:32:18+08:00">2019-06-03</time>
-            
-
-            
-          </span>
-
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          此篇說明如何安裝 ceilometer 和 gnocchi
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/06/03/ceilometer-and-gnocchi/">
-                閱讀全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -747,14 +504,15 @@
   </article>
 
 
-    
-  </section>
-
-  
+  </div>
 
 
           </div>
           
+
+  
+
+
 
         </div>
         
@@ -774,8 +532,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            本站概要
+          </li>
+        </ul>
+      
 
-      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <div class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -860,6 +627,23 @@
         </div>
       </div>
 
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#建立-docker-volume"><span class="nav-number">1.</span> <span class="nav-text">建立 docker volume</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#啟動-grafana"><span class="nav-number">2.</span> <span class="nav-text">啟動 grafana</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#新增-Datasource"><span class="nav-number">3.</span> <span class="nav-text">新增 Datasource</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#匯入-dashboard"><span class="nav-number">4.</span> <span class="nav-text">匯入 dashboard</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改-Dashboard"><span class="nav-number">5.</span> <span class="nav-text">修改 Dashboard</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改-Variables"><span class="nav-number">6.</span> <span class="nav-text">修改 Variables</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
       
 
       
@@ -991,6 +775,10 @@
 
 
   
+  <script src="/js/scrollspy.js?v=7.1.2"></script>
+<script src="/js/post-details.js?v=7.1.2"></script>
+
+
 
   
 
@@ -1006,6 +794,8 @@
 
   
 
+
+  
 
 
   
