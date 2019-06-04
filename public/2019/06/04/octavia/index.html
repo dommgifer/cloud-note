@@ -110,7 +110,7 @@
 <meta property="og:image" content="https://dommgifer0604.herokuapp.com/2019/06/04/octavia/octavia_look.JPG">
 <meta property="og:image" content="https://dommgifer0604.herokuapp.com/2019/06/04/octavia/all_topo.JPG">
 <meta property="og:image" content="https://dommgifer0604.herokuapp.com/2019/06/04/octavia/vip_all_topo.jpg">
-<meta property="og:updated_time" content="2019-06-04T07:13:08.433Z">
+<meta property="og:updated_time" content="2019-06-04T07:15:21.722Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OpenStack Octavia">
 <meta name="twitter:description" content="Octavia 是 OpenStack 新的 load balancer 專案，也是官方推薦的 lbaas，夠對外提供獨立而穩定的API而 neutron lbaasv2則在 Queens 版本被標為棄用。">
@@ -382,7 +382,7 @@
                 
               
 
-              <time title="創建時間：2019-06-04 14:21:44 / 修改時間：15:13:08" itemprop="dateCreated datePublished" datetime="2019-06-04T14:21:44+08:00">2019-06-04</time>
+              <time title="創建時間：2019-06-04 14:21:44 / 修改時間：15:15:21" itemprop="dateCreated datePublished" datetime="2019-06-04T14:21:44+08:00">2019-06-04</time>
             
 
             
@@ -533,8 +533,7 @@
 <h2 id="建立資料庫"><a href="# 建立資料庫" class="headerlink" title="建立資料庫"></a>建立資料庫 </h2><p> 建立 Octavia 資料庫，密碼請自行更換</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># CREATE DATABASE octavia;</span><br><span class="line"># GRANT ALL PRIVILEGES ON octavia.* TO octavia@&apos;localhost&apos; \</span><br><span class="line">  IDENTIFIED BY &apos;openstack&apos;;</span><br><span class="line"># GRANT ALL PRIVILEGES ON octavia.* TO octavia@&apos;%&apos; \</span><br><span class="line">  IDENTIFIED BY &apos;openstack&apos;;</span><br></pre></td></tr></table></figure>
 
-<p>## 建立 Octavia 服務設定</p>
-<p>建立服務，以利透過 service 指令啟動 Octavia<br>建立 Octavia wsgi API 服務，新增 /etc/apache2/sites-available/octavia-api.conf</p>
+<h2 id="建立 -Octavia- 服務設定"><a href="# 建立 -Octavia- 服務設定" class="headerlink" title="建立 Octavia 服務設定"></a>建立 Octavia 服務設定 </h2><p> 建立服務，以利透過 service 指令啟動 Octavia<br>建立 Octavia wsgi API 服務，新增 /etc/apache2/sites-available/octavia-api.conf</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">Listen 9876</span><br><span class="line"></span><br><span class="line">&lt;VirtualHost *:9876&gt;</span><br><span class="line">    WSGIDaemonProcess octavia-wsgi processes=2 threads=1 user=octavia display-name=%&#123;GROUP&#125;</span><br><span class="line">    WSGIProcessGroup octavia-wsgi</span><br><span class="line">    WSGIScriptAlias / /usr/local/bin/octavia-wsgi</span><br><span class="line">    WSGIApplicationGroup %&#123;GLOBAL&#125;</span><br><span class="line"></span><br><span class="line">    ErrorLog /var/log/apache2/octavia_error.log</span><br><span class="line">    &lt;IfVersion &gt;= 2.4&gt;</span><br><span class="line">      ErrorLogFormat &quot;%&#123;cu&#125;t %M&quot;</span><br><span class="line">    &lt;/IfVersion&gt;</span><br><span class="line">    CustomLog /var/log/apache2/octavia_access.log combined</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">     &lt;Directory /usr/local/bin/&gt;</span><br><span class="line">        WSGIProcessGroup octavia-wsgi</span><br><span class="line">        &lt;IfVersion &gt;= 2.4&gt;</span><br><span class="line">            Require all granted</span><br><span class="line">        &lt;/IfVersion&gt;</span><br><span class="line">        &lt;IfVersion &lt; 2.4&gt;</span><br><span class="line">            Order allow,deny</span><br><span class="line">            Allow from all</span><br><span class="line">        &lt;/IfVersion&gt;</span><br><span class="line">    &lt;/Directory&gt;</span><br><span class="line"></span><br><span class="line">&lt;/VirtualHost&gt;</span><br></pre></td></tr></table></figure>
 
 <p>建立 octavia-health-manager 服務，新增 /lib/systemd/system/octavia-health-manager.service </p>
@@ -546,7 +545,7 @@
 <p>建立 octavia-worker 服務，新增 /lib/systemd/system/octavia-worker.service</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=OpenStack Octavia Worker Service</span><br><span class="line">After=syslog.target network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">User=octavia</span><br><span class="line">Group=octavia</span><br><span class="line">ExecStart=/usr/local/bin/octavia-worker --config-file /etc/octavia/octavia.conf --log-file /var/log/octavia/octavia-worker.log</span><br><span class="line"></span><br><span class="line">TimeoutStartSec=120</span><br><span class="line">TimeoutStopSec=300</span><br><span class="line">Restart=on-failure</span><br><span class="line">RestartSec=2</span><br><span class="line"></span><br><span class="line">Slice=nova.slice</span><br><span class="line">CPUAccounting=true</span><br><span class="line">BlockIOAccounting=true</span><br><span class="line">MemoryAccounting=true</span><br><span class="line">TasksAccounting=true</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p>## 啟動服務<br>Apache2 啟用 Octavia api</p>
+<h2 id="啟動服務"><a href="# 啟動服務" class="headerlink" title="啟動服務"></a>啟動服務</h2><p>Apache2 啟用 Octavia api</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># a2ensite octavia-api</span><br></pre></td></tr></table></figure>
 
 <p>啟用 Octavia 相關服務</p>
@@ -555,7 +554,7 @@
 <p>重啟服務</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># service apache2 restart</span><br><span class="line"># service octavia-housekeeping restart</span><br><span class="line"># service octavia-worker restart</span><br><span class="line"># service octavia-health-manager restart</span><br><span class="line"># service neutron-server restart</span><br></pre></td></tr></table></figure>
 
-<p>## 安裝 Octavia dashboard<br>安裝 dashboard，Queens 版為 1.X.X，Rocky 版為 2.X.X </p>
+<h2 id="安裝 -Octavia-dashboard"><a href="# 安裝 -Octavia-dashboard" class="headerlink" title="安裝 Octavia dashboard"></a>安裝 Octavia dashboard</h2><p>安裝 dashboard，Queens 版為 1.X.X，Rocky 版為 2.X.X </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># pip install octavia-dashboard==1.0.1</span><br></pre></td></tr></table></figure>
 
 <p>複製所需檔案</p>
@@ -567,8 +566,7 @@
 <p>重啟 Apache2 </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># service apache2 restart</span><br></pre></td></tr></table></figure>
 
-<p># 解說</p>
-<ul>
+<h1 id="解說"><a href="# 解說" class="headerlink" title="解說"></a>解說</h1><ul>
 <li><p>建立了兩台 web server，並建立了 active standby 的 loadbalancer， 然後 loadbalancer 的 VIP 建在跟 web server 一樣地網段下，連接之後，在 user 端只會看到 loadbalancer 的資訊，不會看見 2 台 haproxy VM </p>
 <img src="/2019/06/04/octavia/user_look.JPG">
 </li>
@@ -791,7 +789,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安裝步驟"><span class="nav-number">1.</span> <span class="nav-text">安裝步驟 </span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#建立所需資源"><span class="nav-number">1.1.</span> <span class="nav-text">建立所需資源 </span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Config- 設定"><span class="nav-number">1.2.</span> <span class="nav-text">Config 設定 </span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建立資料庫"><span class="nav-number">1.3.</span> <span class="nav-text">建立資料庫 </span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安裝步驟"><span class="nav-number">1.</span> <span class="nav-text">安裝步驟 </span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#建立所需資源"><span class="nav-number">1.1.</span> <span class="nav-text">建立所需資源 </span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Config- 設定"><span class="nav-number">1.2.</span> <span class="nav-text">Config 設定 </span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建立資料庫"><span class="nav-number">1.3.</span> <span class="nav-text">建立資料庫 </span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建立 -Octavia- 服務設定"><span class="nav-number">1.4.</span> <span class="nav-text">建立 Octavia 服務設定 </span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#啟動服務"><span class="nav-number">1.5.</span> <span class="nav-text">啟動服務</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安裝 -Octavia-dashboard"><span class="nav-number">1.6.</span> <span class="nav-text">安裝 Octavia dashboard</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#解說"><span class="nav-number">2.</span> <span class="nav-text">解說</span></a></li></ol></div>
             
 
           </div>
