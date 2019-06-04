@@ -433,54 +433,54 @@
       
 
       
-        <p>Grafana 的安裝可以使用套件的方式，或是使用 docker 來啟動，使用 docker 啟動方便又快速，所以以下教學使用 docker 啟動</p>
-<p>請先安裝 docker，如果還沒安裝，可以使用此指令安裝 </p>
+        <p>Grafana 的安裝可以使用套件的方式，或是使用 docker 來啟動，使用 docker 啟動方便又快速，所以以下教學使用 docker 啟動 </p>
+<p> 請先安裝 docker，如果還沒安裝，可以使用此指令安裝 </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># curl -sSL [https://get.docker.com/](https://get.docker.com/) \| sh</span><br></pre></td></tr></table></figure>
 
-<h2 id="建立-docker-volume"><a href="#建立-docker-volume" class="headerlink" title="建立 docker volume"></a>建立 docker volume</h2><p>建立 docker volume 以便儲存 grafana 的資料 </p>
+<h2 id="建立 -docker-volume"><a href="# 建立 -docker-volume" class="headerlink" title="建立 docker volume"></a> 建立 docker volume</h2><p> 建立 docker volume 以便儲存 grafana 的資料 </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># docker volume create grafana-storage</span><br></pre></td></tr></table></figure>
 
-<h2 id="啟動-grafana"><a href="#啟動-grafana" class="headerlink" title="啟動 grafana"></a>啟動 grafana</h2><p>啟動時可以帶入要安裝的 plugin 參數，這裡帶入 gnocchi 的 plugin，還有密碼的參數</p>
+<h2 id="啟動 -grafana"><a href="# 啟動 -grafana" class="headerlink" title="啟動 grafana"></a> 啟動 grafana</h2><p> 啟動時可以帶入要安裝的 plugin 參數，這裡帶入 gnocchi 的 plugin，還有密碼的參數 </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker run \</span><br><span class="line">  -d \</span><br><span class="line">  -p 3000:3000 \</span><br><span class="line">  --name=grafana \</span><br><span class="line">  -e &quot;GF_SECURITY_ADMIN_PASSWORD=admin&quot; \</span><br><span class="line">  -e &quot;GF_INSTALL_PLUGINS=gnocchixyz-gnocchi-datasource&quot; \</span><br><span class="line">  -v grafana-storage:/var/lib/grafana \</span><br><span class="line">  grafana/grafana</span><br></pre></td></tr></table></figure>
 
-<p>啟動後可以進入 grafana dashboard，帳號為 admin</p>
+<p> 啟動後可以進入 grafana dashboard，帳號為 admin</p>
 <p> <a href="http://docker_host:3000" target="_blank" rel="noopener">http://docker_host:3000</a></p>
 <img src="/2019/06/03/grafana-integration-gnocchi/grafana_dash.jpg" title="[grafana]">
 
 
-<h2 id="新增-Datasource"><a href="#新增-Datasource" class="headerlink" title="新增 Datasource"></a>新增 Datasource</h2><p>新增 gnocchi datasource 之前，請先修改 /etc/keystone/keystone.conf 以及 /etc/gnocchi/gnocchi.conf，加入以下內容，IP 為 grafana dashboard</p>
+<h2 id="新增 -Datasource"><a href="# 新增 -Datasource" class="headerlink" title="新增 Datasource"></a> 新增 Datasource</h2><p> 新增 gnocchi datasource 之前，請先修改 /etc/keystone/keystone.conf 以及 /etc/gnocchi/gnocchi.conf，加入以下內容，IP 為 grafana dashboard</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[cors]</span><br><span class="line">allowed_origin = http://10.50.2.10:3000</span><br></pre></td></tr></table></figure>
 
-<p>重啟服務</p>
+<p> 重啟服務 </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># service apache2 restart</span><br><span class="line"># service gnocchi-metricd restart</span><br></pre></td></tr></table></figure>
 
-<p>登入後點選 create data source ，Type 選擇 gnocchi，之後設定依照下圖，填寫完成後，可以按下 Test 測試是否連結成功。</p>
-<p>URL 的 IP 為 Controller IP，Keystone 參數請依照環境填寫</p>
+<p> 登入後點選 create data source ，Type 選擇 gnocchi，之後設定依照下圖，填寫完成後，可以按下 Test 測試是否連結成功。</p>
+<p>URL 的 IP 為 Controller IP，Keystone 參數請依照環境填寫 </p>
 <img src="/2019/06/03/grafana-integration-gnocchi/grafana_gnocchi.jpg" title="[Gnocchi Datasource]">
 
-<h2 id="匯入-dashboard"><a href="#匯入-dashboard" class="headerlink" title="匯入 dashboard"></a>匯入 dashboard</h2><p>Grafana 的官網有提供其他作者上傳的 dashboard，可以根據各種類型搜尋 <a href="https://grafana.com/dashboards" target="_blank" rel="noopener">https://grafana.com/dashboards</a></p>
-<p>這裡匯入編號 4569 的 dashboard， <a href="https://grafana.com/dashboards/4569" target="_blank" rel="noopener">https://grafana.com/dashboards/4569</a></p>
-<p>並選擇剛剛新增的 gnocchi datasource</p>
+<h2 id="匯入 -dashboard"><a href="# 匯入 -dashboard" class="headerlink" title="匯入 dashboard"></a> 匯入 dashboard</h2><p>Grafana 的官網有提供其他作者上傳的 dashboard，可以根據各種類型搜尋 <a href="https://grafana.com/dashboards" target="_blank" rel="noopener">https://grafana.com/dashboards</a></p>
+<p> 這裡匯入編號 4569 的 dashboard， <a href="https://grafana.com/dashboards/4569" target="_blank" rel="noopener">https://grafana.com/dashboards/4569</a></p>
+<p> 並選擇剛剛新增的 gnocchi datasource</p>
 <img src="/2019/06/03/grafana-integration-gnocchi/import.jpg" title="[Import dashboard]">
 
-<h2 id="修改-Dashboard"><a href="#修改-Dashboard" class="headerlink" title="修改 Dashboard"></a>修改 Dashboard</h2><p>匯入後會看到已存在 VM 的監測值，在 Memory 那欄會出現驚嘆號，這是因為原作者要顯示 Memory 使用率，但是 Memory 的 query 有誤，所以需要修改。</p>
+<h2 id="修改 -Dashboard"><a href="# 修改 -Dashboard" class="headerlink" title="修改 Dashboard"></a> 修改 Dashboard</h2><p> 匯入後會看到已存在 VM 的監測值，在 Memory 那欄會出現驚嘆號，這是因為原作者要顯示 Memory 使用率，但是 Memory 的 query 有誤，所以需要修改。</p>
 <img src="/2019/06/03/grafana-integration-gnocchi/dashboard.jpg" title="[Import dashboard]">
 
-<p>點選 Memory usage 旁的箭頭，選 edit，並依照下圖修改</p>
+<p> 點選 Memory usage 旁的箭頭，選 edit，並依照下圖修改 </p>
 <img src="/2019/06/03/grafana-integration-gnocchi/memory.jpg" title="[Import dashboard]">
 
-<p>這裡 Memory 的單位是錯誤的，所以也要修改，改為 MegaByte</p>
+<p> 這裡 Memory 的單位是錯誤的，所以也要修改，改為 MegaByte</p>
 <img src="/2019/06/03/grafana-integration-gnocchi/unit.jpg" title="[Import dashboard]">
 
-<h2 id="修改-Variables"><a href="#修改-Variables" class="headerlink" title="修改 Variables"></a>修改 Variables</h2><p>Grafana 有提供 Variables 的功能，可以依據客製的 Variables 來顯示 dashboard 的直，此範例預設為顯示所有 VM 的監測值，點擊左上角的 Instance，會發現有錯誤，無法列出所有 VM ，因此需要修改 Variables 。</p>
-<p>點選上方 設定 -&gt; Variables -&gt; 選擇變數($INSTANCES)</p>
-<p>修改 Query，改為以下</p>
+<h2 id="修改 -Variables"><a href="# 修改 -Variables" class="headerlink" title="修改 Variables"></a> 修改 Variables</h2><p>Grafana 有提供 Variables 的功能，可以依據客製的 Variables 來顯示 dashboard 的直，此範例預設為顯示所有 VM 的監測值，點擊左上角的 Instance，會發現有錯誤，無法列出所有 VM ，因此需要修改 Variables 。</p>
+<p> 點選上方 設定 -&gt; Variables -&gt; 選擇變數 ($INSTANCES)</p>
+<p> 修改 Query，改為以下 </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">resources(instance, $&#123;display_name&#125;[$&#123;id&#125;], id, ended_at=null)</span><br></pre></td></tr></table></figure>
 
-<p>成功的話可以看到下面會列出所有 VM</p>
+<p> 成功的話可以看到下面會列出所有 VM</p>
 <img src="/2019/06/03/grafana-integration-gnocchi/all.jpg" title="[all]">
 
-<p>這樣就可以點選左上角的 INSTANCE 來選擇要顯示的 VM監控值了，記得要存檔喔</p>
+<p> 這樣就可以點選左上角的 INSTANCE 來選擇要顯示的 VM 監控值了，記得要存檔喔 </p>
 
       
     </div>
@@ -690,7 +690,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#建立-docker-volume"><span class="nav-number">1.</span> <span class="nav-text">建立 docker volume</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#啟動-grafana"><span class="nav-number">2.</span> <span class="nav-text">啟動 grafana</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#新增-Datasource"><span class="nav-number">3.</span> <span class="nav-text">新增 Datasource</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#匯入-dashboard"><span class="nav-number">4.</span> <span class="nav-text">匯入 dashboard</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改-Dashboard"><span class="nav-number">5.</span> <span class="nav-text">修改 Dashboard</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改-Variables"><span class="nav-number">6.</span> <span class="nav-text">修改 Variables</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#建立 -docker-volume"><span class="nav-number">1.</span> <span class="nav-text"> 建立 docker volume</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#啟動 -grafana"><span class="nav-number">2.</span> <span class="nav-text"> 啟動 grafana</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#新增 -Datasource"><span class="nav-number">3.</span> <span class="nav-text"> 新增 Datasource</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#匯入 -dashboard"><span class="nav-number">4.</span> <span class="nav-text"> 匯入 dashboard</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改 -Dashboard"><span class="nav-number">5.</span> <span class="nav-text"> 修改 Dashboard</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改 -Variables"><span class="nav-number">6.</span> <span class="nav-text"> 修改 Variables</span></a></li></ol></div>
             
 
           </div>
