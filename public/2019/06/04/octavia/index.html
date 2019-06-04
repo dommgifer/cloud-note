@@ -106,10 +106,15 @@
 <meta property="og:site_name" content="JaiWei Cloud Note">
 <meta property="og:description" content="Octavia 是 OpenStack 新的 load balancer 專案，也是官方推薦的 lbaas，夠對外提供獨立而穩定的API而 neutron lbaasv2則在 Queens 版本被標為棄用。">
 <meta property="og:locale" content="zh-TW">
-<meta property="og:updated_time" content="2019-06-04T06:35:10.416Z">
+<meta property="og:image" content="https://dommgifer0604.herokuapp.com/2019/06/04/octavia/user_look.JPG">
+<meta property="og:image" content="https://dommgifer0604.herokuapp.com/2019/06/04/octavia/octavia_look.JPG">
+<meta property="og:image" content="https://dommgifer0604.herokuapp.com/2019/06/04/octavia/all_topo.JPG">
+<meta property="og:image" content="https://dommgifer0604.herokuapp.com/2019/06/04/octavia/vip_all_topo.jpg">
+<meta property="og:updated_time" content="2019-06-04T07:13:08.433Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OpenStack Octavia">
 <meta name="twitter:description" content="Octavia 是 OpenStack 新的 load balancer 專案，也是官方推薦的 lbaas，夠對外提供獨立而穩定的API而 neutron lbaasv2則在 Queens 版本被標為棄用。">
+<meta name="twitter:image" content="https://dommgifer0604.herokuapp.com/2019/06/04/octavia/user_look.JPG">
 
 
 
@@ -377,7 +382,7 @@
                 
               
 
-              <time title="創建時間：2019-06-04 14:21:44 / 修改時間：14:35:10" itemprop="dateCreated datePublished" datetime="2019-06-04T14:21:44+08:00">2019-06-04</time>
+              <time title="創建時間：2019-06-04 14:21:44 / 修改時間：15:13:08" itemprop="dateCreated datePublished" datetime="2019-06-04T14:21:44+08:00">2019-06-04</time>
             
 
             
@@ -436,9 +441,152 @@
 <li>Octavia 透過建立 HAProxy 的虛擬機，將流量導入所指定的 member，而 HAProxy 的虛擬機的 image 是官方製作的，裡面包含了 haproxy 以及 keepalive，還有 python Flask 的 API，開啟 9443 port，讓 Octavia-worker 服務可以根據使用者所選擇的 load balancer 的 pool 和 member 等等設定，透過 API 方式，修改 HAProxy 虛擬機的設定。</li>
 <li>Octavia 支援 Active 和 Standby，也就是建立兩台 HAProxy 虛擬機，一台為 Master，另一台為 Slave，兩個是透過 keepalive 做溝通，而 keepalive 的設定也是透過 API 來設定。</li>
 </ul>
-<h1 id="安裝步驟"><a href="# 安裝步驟" class="headerlink" title="安裝步驟"></a>安裝步驟 </h1><p> 以下步驟安裝至 controller 節點</p>
+<h1 id="安裝步驟"><a href="# 安裝步驟" class="headerlink" title="安裝步驟"></a>安裝步驟 </h1><p> 以下步驟安裝至 controller 節點，版本為 Queens</p>
 <h2 id="建立所需資源"><a href="# 建立所需資源" class="headerlink" title="建立所需資源"></a>建立所需資源 </h2><p> 建立 Octavia 使用者和群組</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># addgroup --system octavia </span><br><span class="line"># adduser --system octavia octavia --home /var/lib/octavia </span><br></pre></td></tr></table></figure>
+
+<p>建立 octavia 資料夾</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># mkdir /var/lib/octavia /etc/octavia /var/cache/octavia /var/log/octavia</span><br><span class="line"># chmod 755 /var/lib/octavia /etc/octavia /var/cache/octavia /var/log/octavia</span><br><span class="line"># chown -R octavia:octavia /var/lib/octavia /etc/octavia /var/cache/octavia /var/log/octavia</span><br></pre></td></tr></table></figure>
+
+<p>安裝 octavia，如果要安裝 Queens 版的，版本為 2.0.3 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># pip install octavia==2.0.3</span><br></pre></td></tr></table></figure>
+
+<p>新增 octavia 使用者</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># openstack user create --domain default --password-prompt octavia</span><br></pre></td></tr></table></figure>
+
+<p>新增 octavia role 權限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># openstack role add --project service --user octavia admin</span><br></pre></td></tr></table></figure>
+
+<p>新增 octavia 服務</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># openstack service create --name octavia --description &quot;Octavia Load Balancing Service&quot; load-balancer</span><br></pre></td></tr></table></figure>
+
+<p>新增 octavia API endpoints </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># openstack endpoint create --region RegionOne load-balancer public http://controller:9876</span><br><span class="line"># openstack endpoint create --region RegionOne load-balancer internal http://controller:9873</span><br><span class="line"># openstack endpoint create --region RegionOne load-balancer admin http://controller:9873</span><br></pre></td></tr></table></figure>
+
+<p>新增 octavia role </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># openstack role create load-balancer_observer</span><br><span class="line"># openstack role create load-balancer_global_observer</span><br><span class="line"># openstack role create load-balancer_member</span><br><span class="line"># openstack role create load-balancer_admin</span><br><span class="line"># openstack role create load-balancer_quota_admin</span><br></pre></td></tr></table></figure>
+
+<p>建立 CA 證書 資料夾 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># mkdir /etc/octavia/certs /etc/octavia/certs/private</span><br><span class="line"># chown -R octavia:octavia /etc/octavia/certs /etc/octavia/certs/private</span><br></pre></td></tr></table></figure>
+
+<p>Clone github Octaiva 專案，裡面已經有建立 CA 證書的腳本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># git clone https://github.com/openstack/octavia.git</span><br></pre></td></tr></table></figure>
+
+<p>設定 CA 密碼，此範例為 openstack，並取代腳本內預設密碼後，執行腳本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># cd octavia</span><br><span class="line"># sed -i &apos;s/foobar/openstack/g&apos; bin/create_certificates.sh</span><br><span class="line"># ./bin/create_certificates.sh cert $(pwd)/etc/certificates/openssl.cnf</span><br></pre></td></tr></table></figure>
+
+<p>複製到 /etc/octavia/certs</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># cp certs/ca_01.pem certs/client.pem  /etc/ocatava/certs/</span><br><span class="line"># cp certs/private/cakey.pem /etc/ocatava/certs/private</span><br><span class="line"># chown -R octavia:octavia  /etc/ocatava/certs/</span><br></pre></td></tr></table></figure>
+
+<p>下載 amphora-haproxy image，並上傳</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># wget http://tarballs.openstack.org/octavia/test-images/test-only-amphora-x64-haproxy-ubuntu-xenial.qcow2</span><br><span class="line"># openstack image create --container-format bare --disk-format qcow2 \ </span><br><span class="line">--private --file test-only-amphora-x64-haproxy-ubuntu-xenial.qcow2 \ </span><br><span class="line">--tag octavia-amphora-image amphora-x64-haproxy</span><br></pre></td></tr></table></figure>
+
+<p>建立 flavor </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># openstack flavor create --ram 1024 --disk 20 \ </span><br><span class="line">--vcpu 1 --private --project service m1.amphora</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>建立 loadbalancer 的管理網路，這個網段需要 controller 可以抵達，因為需要呼叫 haproxy VM 裡面的 API，去新增設定，因此可以有以下幾種方式:<ul>
+<li>不建立管理網段，直接將 loadbalancer 建在外網上，但是這樣每建立一個 loadbalancer ，就會占一個 外網 IP，不建議</li>
+<li>建立跟 OpenStack 管理網段一樣的網段，就是建一個外網，但是這個外網是通到 OpenStack 的管理網段。</li>
+<li>建立一條 neutron 內網和 router，並接上外網，然後再由 conttroller 節點新增路由，通往 neutron 內網的網段全部通過 neutron 建的 router</li>
+</ul>
+</li>
+</ul>
+<p>此範例為第三種方式，先建立 neutron 內網</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># openstack network create --provider-network-type vxlan lbaas-mgmt</span><br><span class="line"># openstack subnet create --subnet-range 172.16.0.0/24 --network lbaas-mgmt \</span><br><span class="line">    --gateway 172.16.0.1 --dns-nameserver 8.8.8.8 lbaas-mgmt-subnet</span><br></pre></td></tr></table></figure>
+
+<p>建立 router，並接上內外網</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># openstack router create lb-router</span><br><span class="line"># openstack router add subnet lb-router lbaas-mgmt-subnet</span><br><span class="line"># openstack router set --external-gateway public lb-router</span><br></pre></td></tr></table></figure>
+
+<p>在 controller 新增路由，請先查看 lb-router 所拿到的 IP，然後設定 172.16.0.0/24 都經由此 router IP，dev 則指定外網的網卡</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#  route add -net 172.16.0.0/24 gw 10.40.0.28 dev eno1</span><br></pre></td></tr></table></figure>
+
+<p>設定 service project quota 數為 -1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># openstack quota set --cores -1 \</span><br><span class="line">  --instances -1 \</span><br><span class="line">  --ram -1 \</span><br><span class="line">  --server-groups -1 \</span><br><span class="line">  --server-group-members -1 \</span><br><span class="line">  --secgroups -1 \</span><br><span class="line">  --ports -1 \</span><br><span class="line">  --secgroup-rules -1 \</span><br><span class="line">  service</span><br></pre></td></tr></table></figure>
+
+<p>建立 Octavia VM 的 security group，9443 為 API 的 Port</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># openstack security group create octavia_sec_grp</span><br><span class="line"># openstack security group rule create --ingress --ethertype IPv4 \</span><br><span class="line">    --protocol tcp --dst-port 22 octavia_sec_grp</span><br><span class="line"># openstack security group rule create --ingress --ethertype IPv4 \</span><br><span class="line">    --protocol tcp --dst-port 9443 octavia_sec_grp</span><br></pre></td></tr></table></figure>
+
+<p>建立 keypair ，用來 ssh 進 haproxy VM 除錯用的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># openstack keypair create --public-key ~/.ssh/id_rsa.pub octavia_key</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Config- 設定"><a href="#Config- 設定" class="headerlink" title="Config 設定"></a>Config 設定 </h2><p> 編輯 /etc/octavia/octavia.conf， IP、帳號、密碼請自行更改，下方有更進一步說明</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">[DEFAULT]</span><br><span class="line">transport_url = rabbit://openstack:openstack@openstack</span><br><span class="line"></span><br><span class="line">[api_settings]</span><br><span class="line">auth_strategy = keystone</span><br><span class="line"></span><br><span class="line">[certificates]</span><br><span class="line">ca_private_key = /etc/octavia/certs/private/cakey.pem</span><br><span class="line">ca_certificate = /etc/octavia/certs/ca_01.pem</span><br><span class="line">ca_private_key_passphrase = openstack</span><br><span class="line"></span><br><span class="line">[haproxy_amphora]</span><br><span class="line">server_ca = /etc/octavia/certs/ca_01.pem</span><br><span class="line">client_cert = /etc/octavia/certs/client.pem</span><br><span class="line"></span><br><span class="line">[database]</span><br><span class="line">connection = mysql+pymysql://octavia:openstack@10.40.0.7/octavia</span><br><span class="line">max_retries = -1</span><br><span class="line"></span><br><span class="line">[service_auth]</span><br><span class="line">auth_url = http://10.40.0.7:5000/v3</span><br><span class="line">auth_type = password</span><br><span class="line">username = octavia</span><br><span class="line">password = openstack</span><br><span class="line">user_domain_name = Default</span><br><span class="line">project_name = service</span><br><span class="line">project_domain_name = Default</span><br><span class="line">memcached_servers = openstack:11211</span><br><span class="line"></span><br><span class="line">[keystone_authtoken]</span><br><span class="line">www_authenticate_uri = http://10.40.0.7:5000/v3</span><br><span class="line">auth_url = http://10.40.0.7:5000/v3</span><br><span class="line">auth_type = password</span><br><span class="line">project_domain_name = Default</span><br><span class="line">user_domain_name = Default</span><br><span class="line">project_name = service</span><br><span class="line">username = octavia</span><br><span class="line">password = openstack</span><br><span class="line">memcached_servers = openstack:11211</span><br><span class="line"></span><br><span class="line">[health_manager]</span><br><span class="line">bind_port = 5555</span><br><span class="line">bind_ip = 0.0.0.0</span><br><span class="line">controller_ip_port_list = 10.40.0.7:5555</span><br><span class="line">heartbeat_key = insecure</span><br><span class="line"></span><br><span class="line">[controller_worker]</span><br><span class="line">amp_image_tag = octavia-amphora-image </span><br><span class="line">amp_flavor_id = 08dfaafc-af18-42c2-9e4d-1e0ea328ded5</span><br><span class="line">amp_boot_network_list = 2f7c376b-3620-4bc6-92ff-bca73dcb3007</span><br><span class="line">amp_ssh_key_name = octavia_key</span><br><span class="line">amp_secgroup_list = octavia_sec_grp</span><br><span class="line">amphora_driver = amphora_haproxy_rest_driver</span><br><span class="line">compute_driver = compute_nova_driver</span><br><span class="line">network_driver = allowed_address_pairs_driver</span><br><span class="line">loadbalancer_topology = SINGLE</span><br><span class="line"></span><br><span class="line">[oslo_messaging]</span><br><span class="line">topic = octavia_prov</span><br><span class="line">thread_pool_size = 2</span><br><span class="line"></span><br><span class="line">[oslo_messaging_notifications]</span><br><span class="line">transport_url = rabbit://openstack:openstack@10.40.0.7</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>參數說明:</p>
+<ul>
+<li>[certificates] 內的 ca_private_key_passphrase 就是建 CA 時所輸入的密碼</li>
+<li>[controller_worker] <ul>
+<li>amp_flavor_id: 請填入剛剛建立的 flavor ID，haproxy 的 VM 為此規格</li>
+<li>amp_boot_network_list: haproxy 的 VM 會建在此網段下，填入 network ID</li>
+<li>loadbalancer_topology: 可以設定 haproxy 的 VM 是否為 HA 模式，選項為 ACTIVE_STANDBY 或 SINGLE，選擇 ACTIVE_STANDBY 會建立 2 個 VM，並透過 keepalived 來實作 HA</li>
+</ul>
+</li>
+</ul>
+<p>修改 /etc/neutron/neutron.conf，增加以下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[octavia]</span><br><span class="line">base_url = http://10.40.0.7:9876</span><br></pre></td></tr></table></figure>
+
+<p>新增 /etc/neutron/neutron_lbaas.conf </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[service_providers]</span><br><span class="line">service_provider = LOADBALANCERV2:Octavia:neutron_lbaas.drivers.octavia.driver.OctaviaDriver:default</span><br></pre></td></tr></table></figure>
+
+<h2 id="建立資料庫"><a href="# 建立資料庫" class="headerlink" title="建立資料庫"></a>建立資料庫 </h2><p> 建立 Octavia 資料庫，密碼請自行更換</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># CREATE DATABASE octavia;</span><br><span class="line"># GRANT ALL PRIVILEGES ON octavia.* TO octavia@&apos;localhost&apos; \</span><br><span class="line">  IDENTIFIED BY &apos;openstack&apos;;</span><br><span class="line"># GRANT ALL PRIVILEGES ON octavia.* TO octavia@&apos;%&apos; \</span><br><span class="line">  IDENTIFIED BY &apos;openstack&apos;;</span><br></pre></td></tr></table></figure>
+
+<p>## 建立 Octavia 服務設定</p>
+<p>建立服務，以利透過 service 指令啟動 Octavia<br>建立 Octavia wsgi API 服務，新增 /etc/apache2/sites-available/octavia-api.conf</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">Listen 9876</span><br><span class="line"></span><br><span class="line">&lt;VirtualHost *:9876&gt;</span><br><span class="line">    WSGIDaemonProcess octavia-wsgi processes=2 threads=1 user=octavia display-name=%&#123;GROUP&#125;</span><br><span class="line">    WSGIProcessGroup octavia-wsgi</span><br><span class="line">    WSGIScriptAlias / /usr/local/bin/octavia-wsgi</span><br><span class="line">    WSGIApplicationGroup %&#123;GLOBAL&#125;</span><br><span class="line"></span><br><span class="line">    ErrorLog /var/log/apache2/octavia_error.log</span><br><span class="line">    &lt;IfVersion &gt;= 2.4&gt;</span><br><span class="line">      ErrorLogFormat &quot;%&#123;cu&#125;t %M&quot;</span><br><span class="line">    &lt;/IfVersion&gt;</span><br><span class="line">    CustomLog /var/log/apache2/octavia_access.log combined</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">     &lt;Directory /usr/local/bin/&gt;</span><br><span class="line">        WSGIProcessGroup octavia-wsgi</span><br><span class="line">        &lt;IfVersion &gt;= 2.4&gt;</span><br><span class="line">            Require all granted</span><br><span class="line">        &lt;/IfVersion&gt;</span><br><span class="line">        &lt;IfVersion &lt; 2.4&gt;</span><br><span class="line">            Order allow,deny</span><br><span class="line">            Allow from all</span><br><span class="line">        &lt;/IfVersion&gt;</span><br><span class="line">    &lt;/Directory&gt;</span><br><span class="line"></span><br><span class="line">&lt;/VirtualHost&gt;</span><br></pre></td></tr></table></figure>
+
+<p>建立 octavia-health-manager 服務，新增 /lib/systemd/system/octavia-health-manager.service </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=OpenStack Octavia Health-Manager Service</span><br><span class="line">After=syslog.target network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">User=octavia</span><br><span class="line">Group=octavia</span><br><span class="line">ExecStart=/usr/local/bin/octavia-health-manager --config-file /etc/octavia/octavia.conf --log-file /var/log/octavia/octavia-health-manager.log</span><br><span class="line"></span><br><span class="line">TimeoutStartSec=120</span><br><span class="line">TimeoutStopSec=300</span><br><span class="line">Restart=on-failure</span><br><span class="line">RestartSec=2</span><br><span class="line"></span><br><span class="line">Slice=nova.slice</span><br><span class="line">CPUAccounting=true</span><br><span class="line">BlockIOAccounting=true</span><br><span class="line">MemoryAccounting=true</span><br><span class="line">TasksAccounting=true</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>建立 octavia-housekeeping 服務，新增 /lib/systemd/system/octavia-housekeeping.service</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=OpenStack Octavia Housekeeping Service</span><br><span class="line">After=syslog.target network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">User=octavia</span><br><span class="line">Group=octavia</span><br><span class="line">ExecStart=/usr/local/bin/octavia-housekeeping --config-file /etc/octavia/octavia.conf --log-file /var/log/octavia/octavia-housekeeping.log</span><br><span class="line"></span><br><span class="line">TimeoutStartSec=120</span><br><span class="line">TimeoutStopSec=300</span><br><span class="line">Restart=on-failure</span><br><span class="line">RestartSec=2</span><br><span class="line"></span><br><span class="line">Slice=nova.slice</span><br><span class="line">CPUAccounting=true</span><br><span class="line">BlockIOAccounting=true</span><br><span class="line">MemoryAccounting=true</span><br><span class="line">TasksAccounting=true</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+
+<p>建立 octavia-worker 服務，新增 /lib/systemd/system/octavia-worker.service</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=OpenStack Octavia Worker Service</span><br><span class="line">After=syslog.target network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">User=octavia</span><br><span class="line">Group=octavia</span><br><span class="line">ExecStart=/usr/local/bin/octavia-worker --config-file /etc/octavia/octavia.conf --log-file /var/log/octavia/octavia-worker.log</span><br><span class="line"></span><br><span class="line">TimeoutStartSec=120</span><br><span class="line">TimeoutStopSec=300</span><br><span class="line">Restart=on-failure</span><br><span class="line">RestartSec=2</span><br><span class="line"></span><br><span class="line">Slice=nova.slice</span><br><span class="line">CPUAccounting=true</span><br><span class="line">BlockIOAccounting=true</span><br><span class="line">MemoryAccounting=true</span><br><span class="line">TasksAccounting=true</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>## 啟動服務<br>Apache2 啟用 Octavia api</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># a2ensite octavia-api</span><br></pre></td></tr></table></figure>
+
+<p>啟用 Octavia 相關服務</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># systemctl enable octavia-housekeeping.service</span><br><span class="line"># systemctl enable octavia-worker.service</span><br><span class="line"># systemctl enable octavia-health-manager.service</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>重啟服務</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># service apache2 restart</span><br><span class="line"># service octavia-housekeeping restart</span><br><span class="line"># service octavia-worker restart</span><br><span class="line"># service octavia-health-manager restart</span><br><span class="line"># service neutron-server restart</span><br></pre></td></tr></table></figure>
+
+<p>## 安裝 Octavia dashboard<br>安裝 dashboard，Queens 版為 1.X.X，Rocky 版為 2.X.X </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># pip install octavia-dashboard==1.0.1</span><br></pre></td></tr></table></figure>
+
+<p>複製所需檔案</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># cp /usr/local/lib/python2.7/dist-packages/octavia_dashboard/enabled/_1482_*.py /usr/share/openstack-dashboard/openstack_dashboard/local/enabled/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Django 更新</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># cd /usr/share/openstack-dashboard/</span><br><span class="line"># python manage.py compilemessages</span><br><span class="line"># DJANGO_SETTINGS_MODULE=openstack_dashboard.settings python manage.py collectstatic --noinput</span><br><span class="line"># DJANGO_SETTINGS_MODULE=openstack_dashboard.settings python manage.py compress --force</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>重啟 Apache2 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># service apache2 restart</span><br></pre></td></tr></table></figure>
+
+<p># 解說</p>
+<ul>
+<li><p>建立了兩台 web server，並建立了 active standby 的 loadbalancer， 然後 loadbalancer 的 VIP 建在跟 web server 一樣地網段下，連接之後，在 user 端只會看到 loadbalancer 的資訊，不會看見 2 台 haproxy VM </p>
+<img src="/2019/06/04/octavia/user_look.JPG">
+</li>
+<li><p>登入 octavia 使用者，可以看到 2 台 haproxy VM 建在 service project，其中一台為 Master，另一台為 Backup </p>
+<img src="/2019/06/04/octavia/octavia_look.JPG">
+</li>
+<li><p>VIP 為 private 網段(與 web server 同段)，將兩者網路拓樸組合，就變成以下架構</p>
+<img src="/2019/06/04/octavia/all_topo.JPG">
+</li>
+<li><p>VIP 為新建的 vip 網段(與 web server 不同段)，將兩者網路拓樸組合，就變成以下架構</p>
+<img src="/2019/06/04/octavia/vip_all_topo.jpg">
+
+
+
+
+</li>
+</ul>
+
       
     </div>
 
@@ -643,7 +791,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安裝步驟"><span class="nav-number">1.</span> <span class="nav-text">安裝步驟 </span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#建立所需資源"><span class="nav-number">1.1.</span> <span class="nav-text">建立所需資源 </span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安裝步驟"><span class="nav-number">1.</span> <span class="nav-text">安裝步驟 </span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#建立所需資源"><span class="nav-number">1.1.</span> <span class="nav-text">建立所需資源 </span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Config- 設定"><span class="nav-number">1.2.</span> <span class="nav-text">Config 設定 </span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建立資料庫"><span class="nav-number">1.3.</span> <span class="nav-text">建立資料庫 </span></a></li></ol></li></ol></div>
             
 
           </div>
